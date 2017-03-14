@@ -17,7 +17,7 @@ export const getProduct = (id) => ({
 	})}`
 })
 
-export const getCheapAppleProducts = (page = 1, pageSize = 3) => ({
+export const getCheapAppleProducts = (page = 1, pageSize = 2) => ({
   ...GET,
   path: `${API_HOST}/products(manufacturer=apple&salePrice<50)${formatQueryParams({
 		format: 'json',

@@ -13,7 +13,7 @@ export default class Pagination extends Component {
     }
 
     return (
-      <nav style={{ display: 'flex', justifyContent: 'space-around' }}>
+      <nav style={{ display: 'flex', justifyContent: 'space-around', padding: 60 }}>
         <a href="#" onClick={(e) => currentPage > 1 && this.handlePaginationClick(e, currentPage - 1)}>Previous</a>
 				<div>{currentPage} / {totalPages}</div>
 				<a href="#" onClick={(e) => this.handlePaginationClick(e, currentPage + 1)}>Next</a>

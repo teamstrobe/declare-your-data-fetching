@@ -2,10 +2,11 @@ import { PropTypes, PureComponent } from 'react';
 import lscache from 'lscache';
 
 import { protectFromUnmount } from '../utilities/protectFromUnmount';
+import { shallowCompare } from '../utilities/shallowCompare';
 
 window.lscache = lscache;
 
-export default class Fetch extends PureComponent { // @TODO - should I be using PureComponent
+export default class Fetch extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,18 +26,13 @@ export default class Fetch extends PureComponent { // @TODO - should I be using 
   }
 
   componentWillReceiveProps(nextProps) {
-    const { shouldFetchAgain } = nextProps;
-    if (shouldFetchAgain(this.props, nextProps)) {
+    if (!shallowCompare(this.props, nextProps)) {
       this.fetchData(nextProps);
     }
   }
 
   fetchData(props) {
-    const { shouldFetch, path, method, headers, cache, cacheLength } = props;
-
-    if (!shouldFetch(props)) {
-      return;
-    }
+    const { path, method, headers, cache, cacheLength } = props;
 
     if (cache) {
       const fromCache = lscache.get(path);
@@ -66,7 +62,6 @@ export default class Fetch extends PureComponent { // @TODO - should I be using 
           return result;
         })
         .then(this.protect(result => {
-          throw new Error('oops');
           setTimeout(() => {
             this.setState({
               result,
@@ -94,16 +89,11 @@ export default class Fetch extends PureComponent { // @TODO - should I be using 
 Fetch.propTypes = {
   children: PropTypes.func.isRequired,
   path: PropTypes.string.isRequired,
+  method: PropTypes.string.isRequired,
+  cache: PropTypes.bool.isRequired,
 };
 
-export const shouldFetchAgain = (props, nextProps) => (
-  props.path !== nextProps.path
-  // @TODO - use a shallow compare?
-);
-
 Fetch.defaultProps = {
-  shouldFetch: () => true,
-  shouldFetchAgain,
 	method: 'GET',
   cache: false,
   cacheLength: 720, // 12 hours

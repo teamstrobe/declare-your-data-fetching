@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { scrollToTop } from '../utilities/scrollToTop';
 
 import Fetch from './Fetch';
 import Error from './Error';
@@ -18,29 +19,32 @@ class App extends Component {
   render() {
     const { page } = this.state;
     return (
-      <Fetch {...getCheapAppleProducts(page)}>
-        {({loading, result, error}, retry) =>
-          <div>
-            {
-              (loading && <Loading />) ||
-              (error && <Error error={error} onRetryClick={retry} />) ||
-              (result && result.products && <div>
-                {result.products.map((product, i) =>
-                  <Product key={i} {...product} />
-                )}
-              </div>)
-            }
-            {result && <Pagination
-                currentPage={page}
-                totalPages={result.totalPages}
-                onPaginationChange={page =>
-                  this.setState({ page })
-                }
-              />
-            }
-          </div>
-        }
-      </Fetch>
+      <div style={{ maxWidth: 600, margin: 'auto' }}>
+        <Fetch {...getCheapAppleProducts(page)}>
+          {({loading, result, error}, retry) =>
+            <div>
+              {
+                (loading && <Loading />) ||
+                (error && <Error error={error} onRetryClick={retry} />) ||
+                (result && result.products && <div>
+                  {result.products.map((product, i) =>
+                    <Product key={i} {...product} />
+                  )}
+                </div>)
+              }
+              {result && <Pagination
+                  currentPage={page}
+                  totalPages={result.totalPages}
+                  onPaginationChange={page => {
+                    this.setState({ page });
+                    scrollToTop();
+                  }}
+                />
+              }
+            </div>
+          }
+        </Fetch>
+      </div>
     );
   }
 }
